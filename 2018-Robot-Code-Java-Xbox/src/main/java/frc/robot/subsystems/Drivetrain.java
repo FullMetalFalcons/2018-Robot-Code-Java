@@ -8,8 +8,10 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Robot;
@@ -26,6 +28,8 @@ public class Drivetrain extends Subsystem {
   WPI_TalonSRX leftRear;
   WPI_TalonSRX rightFront;
   WPI_TalonSRX rightRear;
+  Encoder rightEncoder;
+  Encoder leftEncoder;
 
   DifferentialDrive diffDrive;
   
@@ -35,6 +39,20 @@ public class Drivetrain extends Subsystem {
     leftRear = new WPI_TalonSRX(3);
     rightFront = new WPI_TalonSRX(0);
     rightRear = new WPI_TalonSRX(1);
+
+    rightEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+    leftEncoder = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
+
+    rightEncoder.reset();
+    leftEncoder.reset();
+
+
+    rightFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+    leftFront.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
+    rightFront.getSelectedSensorPosition(0);
+    leftFront.getSelectedSensorPosition(0);
+
 
     leftRear.follow(leftFront);
     rightRear.follow(rightFront);
@@ -59,10 +77,15 @@ public class Drivetrain extends Subsystem {
   }
 
 public int getRightDistance() {
-  return 0;
+  return rightFront.getSelectedSensorPosition(0);
+}
+
+public int getLeftDistance(){
+  return leftFront.getSelectedSensorPosition(0);
 }
 
 public void stop(){
   Robot.tankDrive(0.0, 0.0);
 }
+
 }
